@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Filament\Resources\Products\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Table;
+
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+
+class ProductsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make("name"),
+                TextColumn::make("sku"),
+                TextColumn::make("price"),
+                TextColumn::make("stock"),
+                ImageColumn::make("image")->disk("public"),
+                TextColumn::make("is_active")
+                    ->label("Status")
+                    ->badge()
+                    ->formatStateUsing(
+                        fn($state) => $state ? "Aktif" : "Tidak Aktif",
+                    )
+                    ->color(fn($state) => $state ? "success" : "danger"),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([EditAction::make()])
+            ->toolbarActions([
+                BulkActionGroup::make([DeleteBulkAction::make()]),
+            ]);
+    }
+}
