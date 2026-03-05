@@ -10,13 +10,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-
-use Filament\Support\Icon\HeroIcon;
 
 class PostForm
 {
@@ -24,35 +21,63 @@ class PostForm
     {
         return $schema
             ->components([
-                //section 1
+                // section 1
                 Group::make([
                     Section::make("Post Details")
-                        ->Description("Fill in details of the post")
+                        ->description("Fill in details of the post")
                         ->icon("heroicon-o-document-text")
                         ->schema([
                             Group::make([
                                 TextInput::make("title")
-                                    ->minLength(5)
-                                    ->required(),
-                                TextInput::make("slug")->unique(),
+                                    ->rules(["required", "min:5", "max:100"])
+                                    ->validationMessages([
+                                        "required" => "Title cannot be empty",
+                                        "min" =>
+                                            "Title must be at least 5 characters",
+                                        "max" =>
+                                            "Title cannot exceed 100 characters",
+                                    ]),
+                                TextInput::make("slug")
+                                    ->rules(["required", "min:3"])
+                                    ->unique()
+                                    ->validationMessages([
+                                        "required" => "Slug cannot be empty",
+                                        "min" =>
+                                            "Slug must be at least 3 characters",
+                                        "unique" => "Slug must be unique",
+                                    ]),
                                 Select::make("category_id")
                                     ->relationship("category", "nama")
                                     ->preload()
-                                    ->searchable(),
+                                    ->required()
+                                    ->searchable()
+                                    ->validationMessages([
+                                        "required" =>
+                                            "Please select a category",
+                                    ]),
                                 ColorPicker::make("color"),
                             ])->columns(2),
-                            MarkdownEditor::make("content"),
+                            MarkdownEditor::make("body")
+                                ->rules(["nullable", "max:5000"])
+                                ->validationMessages([
+                                    "max" =>
+                                        "Content cannot exceed 5000 characters",
+                                ]),
                         ]),
                 ])->columnSpan(2),
-                // RichEditor::make("content"),
 
                 Group::make([
+                    // section 2
                     Section::make("Image Upload")
                         ->icon("heroicon-o-photo")
                         ->schema([
                             FileUpload::make("image")
                                 ->disk("public")
-                                ->directory("posts"),
+                                ->directory("posts")
+                                ->required()
+                                ->validationMessages([
+                                    "required" => "Please upload an image",
+                                ]),
                         ]),
                     // section 3
                     Section::make("Meta Information")
@@ -63,7 +88,6 @@ class PostForm
                             DateTimePicker::make("published_at"),
                         ]),
                 ])->columnSpan(1),
-                // section 2
             ])
             ->columns(3);
     }
