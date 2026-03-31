@@ -9,6 +9,9 @@ use App\Filament\Resources\Categories\Schemas\CategoryForm;
 use App\Filament\Resources\Categories\Tables\CategoriesTable;
 use App\Models\Category;
 use BackedEnum;
+
+use App\Filament\Resources\Categories\RelationManagers\PostsRelationManager;
+
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -34,9 +37,7 @@ class CategoryResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-                //
-            ];
+        return [PostsRelationManager::class];
     }
 
     public static function getPages(): array

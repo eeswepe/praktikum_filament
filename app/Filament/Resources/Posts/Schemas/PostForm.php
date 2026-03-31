@@ -48,7 +48,7 @@ class PostForm
                                     ]),
                                 Select::make("category_id")
                                     ->relationship("category", "nama")
-                                    ->preload()
+                                    // ->preload()
                                     ->required()
                                     ->searchable()
                                     ->validationMessages([
@@ -83,7 +83,10 @@ class PostForm
                     Section::make("Meta Information")
                         ->icon("heroicon-o-tag")
                         ->schema([
-                            TagsInput::make("tags"),
+                            // TagsInput::make("tags"),
+                            Select::make("tags")
+                                ->multiple()
+                                ->relationship("tags", "name"),
                             Checkbox::make("published"),
                             DateTimePicker::make("published_at"),
                         ]),
